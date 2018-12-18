@@ -12,16 +12,17 @@ const app = express();
 
 app.use(express.static("public"));
 app.use(logger);
-app.get('/api/notes', (req, res) => {
-  const searchTerm = req.query.searchTerm;
-  let returnItems = [];
-  for (let i=0; i < data.length; i++) {
-    if (data[i].title.includes(searchTerm)) {
-      returnItems.push(data[i])
+app.get('/api/notes', (req, res, next) => {
+  const { searchTerm } = req.query;
+
+  notes.filter(searchTerm, (err, list) => {
+    if (err) {
+      return next(err); // goes to error handler
     }
-  }
-  res.json(returnItems);
+    res.json(list); // responds with filtered array
+  });
 });
+
 app.get('/api/notes/:id', (req, res) => {
   const { id } = req.params;
   let Item = data.find( item => item.id === Number(id));
