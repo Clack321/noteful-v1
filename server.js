@@ -9,9 +9,10 @@ const {PORT }= require('./config');
 const {logger} = require('./middleware/logger');
 const app = express();
 
-
-app.use(express.static("public"));
 app.use(logger);
+app.use(express.static("public"));
+app.use(express.json());
+
 app.get('/api/notes', (req, res, next) => {
   const { searchTerm } = req.query.searchTerm;
   notes.filter(searchTerm, (err, list) => {
@@ -38,6 +39,31 @@ app.get('/api/notes/:id', (req, res) => {
 })
 app.get('/boom', (req, res, next) => {
   throw new Error('Boom!!');
+});
+
+app.put('/api/notes/:id', (req, res, next) => {
+  const id = req.params.id;
+
+  /***** Never trust users - validate input *****/
+  const updateObj = {};
+  const updateFields = ['title', 'content'];
+
+  updateFields.forEach(field => {
+    if (field in req.body) {
+      updateObj[field] = req.body[field];
+    }
+  });
+
+  notes.update(id, updateObj, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      next();
+    }
+  });
 });
 
 app.use(function (req, res, next) {
