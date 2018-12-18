@@ -13,8 +13,7 @@ const app = express();
 app.use(express.static("public"));
 app.use(logger);
 app.get('/api/notes', (req, res, next) => {
-  const { searchTerm } = req.query;
-
+  const { searchTerm } = req.query.searchTerm;
   notes.filter(searchTerm, (err, list) => {
     if (err) {
       return next(err); // goes to error handler
@@ -28,16 +27,14 @@ app.get('/api/notes/:id', (req, res) => {
 
   notes.find(id, (err, item) => {
     if (err) {
-      console.error(err);
+      return next(err);
     }
     if (item) {
-      console.log(item);
+      res.json(item);
     } else {
       console.log('not found');
     }
   });
-  let Item = data.find( item => item.id === Number(id));
-  res.json(Item);
 })
 app.get('/boom', (req, res, next) => {
   throw new Error('Boom!!');
