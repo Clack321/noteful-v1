@@ -3,11 +3,13 @@
 // Load array of notes
 const express = require('express');
 const data = require('./db/notes');
+const {PORT }= require('./config');
+const {logger} = require('./middleware/logger');
 const app = express();
 
+
 app.use(express.static("public"));
-
-
+app.use(logger);
 app.get('/api/notes', (req, res) => {
   const searchTerm = req.query.searchTerm;
   let returnItems = [];
@@ -18,14 +20,13 @@ app.get('/api/notes', (req, res) => {
   }
   res.json(returnItems);
 });
-
 app.get('/api/notes/:id', (req, res) => {
   const { id } = req.params;
   let Item = data.find( item => item.id === Number(id));
   res.json(Item);
 })
 
-app.listen(8080, function() {
+app.listen(PORT, function() {
   console.info(`Server listening on ${this.address().port}`)
 }).on('error', err => {
   console.error(err);
