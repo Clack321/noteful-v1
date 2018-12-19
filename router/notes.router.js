@@ -76,5 +76,20 @@ notes.find(id, (err, item) => {
       }
     });
   });
+
+  notesRouter.delete('/notes/:id', (req, res, next) => {
+    id = req.params.id
+    notes.delete(id, (err, item) => {
+        if (err) {
+            console.log(err);
+            next(err);
+        }
+        if (item) {
+            res.status(204).end();
+        } else {
+            next();
+        }
+    })
+  });
   
 module.exports = notesRouter;
