@@ -67,8 +67,6 @@ app.put('/api/notes/:id', (req, res, next) => {
 });
 
 app.use(function (req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
   res.status(404).json({ message: 'Not Found' });
 });
 
