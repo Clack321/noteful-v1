@@ -4,16 +4,17 @@
 const express = require('express');
 const data = require('./db/notes');
 const simDB = require('./db/simDB');  
-const notes = simDB.initialize(data);
+//const notes = simDB.initialize(data);
 const {PORT }= require('./config');
 const {logger} = require('./middleware/logger');
 const app = express();
+const notesRouter = require('./router/notes.router');
 
 app.use(logger);
 app.use(express.static("public"));
 app.use(express.json());
-
-app.get('/api/notes', (req, res, next) => {
+app.use('/api', notesRouter)
+/*app.get('/api/notes', (req, res, next) => {
   const { searchTerm } = req.query.searchTerm;
   notes.filter(searchTerm, (err, list) => {
     if (err) {
@@ -44,7 +45,6 @@ app.get('/boom', (req, res, next) => {
 app.put('/api/notes/:id', (req, res, next) => {
   const id = req.params.id;
 
-  /***** Never trust users - validate input *****/
   const updateObj = {};
   const updateFields = ['title', 'content'];
 
@@ -65,6 +65,7 @@ app.put('/api/notes/:id', (req, res, next) => {
     }
   });
 });
+*/
 
 app.use(function (req, res, next) {
   res.status(404).json({ message: 'Not Found' });
