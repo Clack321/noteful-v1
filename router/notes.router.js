@@ -16,7 +16,7 @@ notesRouter.get('/notes', (req, res, next) => {
     });
   });
 
-notesRouter.get('/notes/:id', (req, res) => {
+notesRouter.get('/notes/:id', (req, res, next) => {
   const { id } = req.params;
   notes.find(id)
   .then(item => {
@@ -70,7 +70,7 @@ notesRouter.get('/notes/:id', (req, res) => {
   
     notes.create(newItem).then((item) => {
       if (item) {
-        res.location(`http://${req.headers.host}/api/notes/${item.id}`).status(201).json(item);
+        res.location(`/api/notes/${item.id}`).status(201).json(item);
       } else {
         next();
       }
@@ -87,7 +87,9 @@ notesRouter.get('/notes/:id', (req, res) => {
         } else {
             next();
         }
-    }).catch()
+    }).catch( err => {
+      next(err);
+    })
   });
   
 module.exports = notesRouter;
